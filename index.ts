@@ -12,6 +12,8 @@ const job = new CronJob(
   true // start
 )
 
+getAppointment()
+
 async function getAppointment() {
   const browser = await chromium.launch({
     headless: false,
@@ -60,9 +62,13 @@ async function getAppointment() {
   })
   await appointmentType.click()
 
+  await page
+    .locator('#mensajePracticaSinTurnoDiv div')
+    .waitFor({ state: 'visible', timeout: 3000 })
+
   const noAppointments = await page
     .locator('#mensajePracticaSinTurnoDiv div')
-    .innerHTML()
+    .isVisible()
 
   const date = new Date()
 
