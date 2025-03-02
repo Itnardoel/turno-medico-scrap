@@ -15,9 +15,7 @@ const job = new CronJob(
 getAppointment()
 
 async function getAppointment() {
-  const browser = await chromium.launch({
-    headless: false,
-  })
+  const browser = await chromium.launch()
 
   const page = await browser.newPage()
 
@@ -29,8 +27,8 @@ async function getAppointment() {
   const loginPass = loginForm.getByPlaceholder('Clave')
   const loginButton = loginForm.getByRole('button', { name: 'Ingresar' })
 
-  await loginDoc.fill(`${process.env.ACCORD_DNI}`)
-  await loginPass.fill(`${process.env.ACCORD_PASS}`)
+  await loginDoc.fill(`${process.env.DNI}`)
+  await loginPass.fill(`${process.env.PASS}`)
   await loginButton.click()
 
   const appointmentButton = page
@@ -62,10 +60,6 @@ async function getAppointment() {
   })
   await appointmentType.click()
 
-  await page
-    .locator('#mensajePracticaSinTurnoDiv div')
-    .waitFor({ state: 'visible', timeout: 3000 })
-
   const noAppointments = await page
     .locator('#mensajePracticaSinTurnoDiv div')
     .isVisible()
@@ -85,8 +79,10 @@ async function getAppointment() {
   } else {
     await fetch(
       `https://api.telegram.org/bot${
-        process.env.TELEGRAM_KEY
-      }/sendMessage?chat_id=-1002377077537&text=${encodeURIComponent(
+        process.env.TELEGRAM_BOT_TOKEN
+      }/sendMessage?chat_id=${
+        process.env.TELEGRAM_CHAT_ID
+      }&text=${encodeURIComponent(
         `Hay turnos disponibles siendo ${format(date, {
           date: 'full',
           time: 'short',

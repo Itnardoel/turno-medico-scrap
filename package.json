@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --watch --experimental-strip-types index.ts"
+    "start": "node --watch --experimental-strip-types index.ts",
+    "postinstall": "pnpm exec playwright install"
   },
   "keywords": [],
   "author": "",
